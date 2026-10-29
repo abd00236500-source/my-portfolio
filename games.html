@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#070b16">
+<title>ABDO ARCADE | عالم الألعاب</title>
+<style>
+:root{color-scheme:dark;--bg:#070b16;--panel:#101b31;--cyan:#55d8ff;--muted:#aab8d2}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#172c50 0%,var(--bg) 65%);color:#fff;font-family:Arial,sans-serif;min-height:100vh}
+.wrap{max-width:1100px;margin:auto;padding:22px 16px 40px}
+nav{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-size:24px;font-weight:900;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 20px #55d8ff70}
+a{color:inherit;text-decoration:none}
+.back{border:1px solid #344765;padding:10px 13px;border-radius:12px}
+.hero{text-align:center;padding:58px 0 36px}
+.tag{display:inline-block;color:var(--cyan);border:1px solid #55d8ff55;background:#55d8ff10;border-radius:30px;padding:8px 14px;font-size:12px;letter-spacing:2px}
+h1{font-size:clamp(35px,8vw,66px);margin:20px 0 12px;line-height:1.1}
+h1 span{color:var(--cyan);text-shadow:0 0 28px #55d8ff55}
+.hero p{color:var(--muted);line-height:1.9;margin:auto;max-width:540px}
+.stats{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:24px}
+.stat{border:1px solid #263e62;background:#0b1426;padding:10px 15px;border-radius:12px;color:#dbeaff;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.card{position:relative;overflow:hidden;border:1px solid #263e62;border-radius:22px;padding:22px;background:linear-gradient(145deg,#172b49,#0b1223);transition:transform .2s,border-color .2s;min-height:235px}
+.card:hover{transform:translateY(-5px);border-color:var(--cyan)}
+.icon{width:62px;height:62px;display:grid;place-items:center;border-radius:18px;background:#55d8ff12;border:1px solid #55d8ff40;font-size:32px;margin:14px 0}
+.number{font-size:12px;color:var(--cyan);letter-spacing:2px}
+h2{font-size:22px;margin:8px 0}
+.card p{color:var(--muted);font-size:14px;line-height:1.8;min-height:48px}
+.play{display:inline-block;background:var(--cyan);color:#06101e;font-weight:bold;padding:11px 17px;border-radius:11px;margin-top:5px}
+.play:active{transform:scale(.97)}
+footer{text-align:center;color:#7889a7;font-size:13px;padding-top:35px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.hero{padding:42px 0 28px}.card{min-height:0}.back{font-size:13px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<nav>
+<div class="logo">ABDO ARCADE</div>
+<a class="back" href="projects.html">← رجوع للمشاريع</a>
+</nav>
+<header class="hero">
+<div class="tag">PLAYER ONE · READY?</div>
+<h1>العبها بطريقتك<br><span>ABDO ARCADE</span></h1>
+<p>أهلاً بيك في ساحة الألعاب! اختار لعبتك، اجمع النقاط، وحاول تحطم أفضل نتيجة ليك.</p>
+<div class="stats">
+<div class="stat">🎮 4 ألعاب</div>
+<div class="stat">📱 تحكم باللمس</div>
+<div class="stat">🏆 حفظ أفضل نتيجة</div>
+</div>
+</header>
+<section class="grid">
+<article class="card">
+<div class="number">GAME 01</div><div class="icon">🚀</div>
+<h2>Space Shooter</h2>
+<p>قد سفينتك في الفضاء، تجنب الخطر واضرب الأهداف واجمع أعلى نتيجة.</p>
+<a class="play" href="games/space.html">ابدأ اللعب ←</a>
+</article>
+<article class="card">
+<div class="number">GAME 02</div><div class="icon">🐍</div>
+<h2>Snake</h2>
+<p>حرّك الثعبان واجمع الطعام وكبّر حجمك من غير ما تخبط في نفسك.</p>
+<a class="play" href="games/snake.html">ابدأ اللعب ←</a>
+</article>
+<article class="card">
+<div class="number">GAME 03</div><div class="icon">🧠</div>
+<h2>Memory Match</h2>
+<p>اختبر ذاكرتك، اقلب البطاقات وطابق الصور بأقل عدد من المحاولات.</p>
+<a class="play" href="games/memory.html">ابدأ اللعب ←</a>
+</article>
+<article class="card">
+<div class="number">GAME 04</div><div class="icon">⚡</div>
+<h2>Reaction Test</h2>
+<p>اختبر سرعة استجابتك وشوف محتاج كام ملي ثانية عشان تضغط في الوقت المناسب.</p>
+<a class="play" href="games/reaction.html">ابدأ اللعب ←</a>
+</article>
+</section>
+<footer>ABDO ARCADE © 2026 — العب، اتحدى نفسك، وحسّن نتيجتك</footer>
+</main>
+</body>
+</html>

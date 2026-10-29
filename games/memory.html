@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070b16">
+<title>Memory Match | ABDO ARCADE</title>
+<style>
+:root{--bg:#070b16;--panel:#111c32;--cyan:#55d8ff;--muted:#aab8d2;--green:#58ffc5}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#172d50 0%,var(--bg) 68%);color:#fff;font-family:Arial,sans-serif}
+button{font:inherit;touch-action:manipulation}
+.wrap{width:min(100%,650px);margin:auto;padding:18px 15px 30px}
+nav{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.logo{font-weight:900;letter-spacing:1px;color:var(--cyan);font-size:19px;text-shadow:0 0 18px #55d8ff55}
+.back{color:#fff;text-decoration:none;border:1px solid #344765;border-radius:11px;padding:9px 12px;font-size:13px}
+.hero{text-align:center;padding:30px 0 22px}
+.tag{color:var(--cyan);font-size:11px;letter-spacing:3px}
+h1{font-size:clamp(30px,8vw,43px);margin:10px 0}
+h1 span{color:var(--cyan)}
+.hero p{color:var(--muted);font-size:14px;line-height:1.8;margin:0}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:20px 0}
+.stat{background:#101a2e;border:1px solid #263e62;border-radius:14px;text-align:center;padding:12px 5px}
+.stat small{display:block;color:var(--muted);font-size:11px;margin-bottom:7px}
+.stat strong{font-size:22px;color:var(--cyan);font-variant-numeric:tabular-nums}
+.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;perspective:900px}
+.card{position:relative;aspect-ratio:1/1;border:0;background:transparent;padding:0;cursor:pointer;perspective:600px;-webkit-tap-highlight-color:transparent}
+.inner{position:absolute;inset:0;transition:transform .35s;transform-style:preserve-3d}
+.card.flipped .inner,.card.matched .inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;display:grid;place-items:center;border-radius:15px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.front{border:1px solid #31527c;background:linear-gradient(145deg,#1a3154,#10192c);color:var(--cyan);font-size:clamp(22px,7vw,34px);box-shadow:inset 0 0 18px #55d8ff08}
+.front:after{content:"✦";text-shadow:0 0 16px #55d8ff}
+.backface{transform:rotateY(180deg);background:#102c3b;border:1px solid var(--cyan);font-size:clamp(25px,8vw,39px);box-shadow:0 0 15px #55d8ff20}
+.card.matched .backface{border-color:var(--green);background:#10352f;box-shadow:0 0 18px #58ffc520}
+.card:focus-visible{outline:2px solid white;outline-offset:3px;border-radius:15px}
+.actions{display:flex;gap:10px;margin-top:17px}
+.action{flex:1;border:1px solid #36577c;background:#111c32;color:#fff;border-radius:12px;padding:13px 8px;cursor:pointer}
+.action.primary{background:var(--cyan);color:#06101e;border-color:var(--cyan);font-weight:bold}
+.message{min-height:25px;text-align:center;color:var(--green);font-size:14px;margin:14px 0 0;line-height:1.7}
+.tip{text-align:center;color:#7889a7;font-size:12px;line-height:1.8;margin-top:20px}
+.overlay{position:fixed;inset:0;background:#030712dd;display:none;align-items:center;justify-content:center;padding:20px;z-index:5}
+.overlay.show{display:flex}
+.dialog{width:min(100%,360px);background:#111c32;border:1px solid #55d8ff70;border-radius:23px;padding:26px;text-align:center;box-shadow:0 0 50px #008cff25}
+.dialog .trophy{font-size:48px}
+.dialog h2{margin:12px 0;color:var(--cyan)}
+.dialog p{color:var(--muted);line-height:1.9;font-size:14px}
+.dialog .action{width:100%;margin-top:8px}
+@media(max-width:380px){.wrap{padding-inline:11px}.board{gap:7px}.face{border-radius:11px}.stats{gap:6px}.stat{padding:10px 3px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<nav>
+<div class="logo">ABDO ARCADE</div>
+<a class="back" href="../games.html">← قائمة الألعاب</a>
+</nav>
+<header class="hero">
+<div class="tag">GAME 03 · MEMORY CHALLENGE</div>
+<h1>لعبة <span>الذاكرة</span> 🧠</h1>
+<p>اقلب الكروت، افتكر أماكن الرموز، وطابق كل زوج بأقل عدد من الحركات!</p>
+</header>
+<section class="stats" aria-label="إحصائيات اللعبة">
+<div class="stat"><small>الحركات</small><strong id="moves">0</strong></div>
+<div class="stat"><small>الوقت</small><strong id="time">00:00</strong></div>
+<div class="stat"><small>أفضل نتيجة</small><strong id="best">—</strong></div>
+</section>
+<section class="board" id="board" aria-label="بطاقات لعبة الذاكرة"></section>
+<div class="message" id="message" aria-live="polite">جاهز؟ اضغط على أي كارت للبدء 🎮</div>
+<div class="actions">
+<button class="action primary" id="restart">🔄 لعبة جديدة</button>
+<button class="action" id="hint">💡 تلميح</button>
+</div>
+<p class="tip">طابق الرموز الثمانية • أفضل نتيجة تُحفظ على نفس المتصفح والجهاز</p>
+</main>
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+<div class="dialog">
+<div class="trophy">🏆</div>
+<h2 id="winTitle">مبروك! كسبت التحدي</h2>
+<p id="result"></p>
+<button class="action primary" id="again">العب مرة تانية ↻</button>
+<button class="action" id="close">العودة للوحة</button>
+</div>
+</div>
+<script>
+(function(){
+const symbols=["🚀","🎮","💎","👾","⚡","🪐","🧩","🏆"];
+const board=document.getElementById("board");
+const movesEl=document.getElementById("moves");
+const timeEl=document.getElementById("time");
+const bestEl=document.getElementById("best");
+const message=document.getElementById("message");
+const overlay=document.getElementById("overlay");
+const result=document.getElementById("result");
+let deck=[],first=null,second=null,locked=false,moves=0,matches=0,seconds=0,started=false,timer=null,hints=0;
+const BEST_KEY="abdo_arcade_memory_best_v1";
+function getBest(){try{return Number(localStorage.getItem(BEST_KEY))||0}catch(e){return 0}}
+function showBest(){const b=getBest();bestEl.textContent=b?b+" حركة":"—"}
+function fmt(s){return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+function startTimer(){if(started)return;started=true;timer=setInterval(()=>{seconds++;timeEl.textContent=fmt(seconds)},1000)}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function makeCard(symbol,index){
+ const button=document.createElement("button");
+ button.className="card";button.type="button";
+ button.setAttribute("aria-label","كارت مخفي");
+ button.innerHTML='<span class="inner"><span class="face front"></span><span class="face backface"></span></span>';
+ button.querySelector(".backface").textContent=symbol;
+ button.addEventListener("click",()=>flip(button,symbol));
+ button.dataset.index=index;
+ return button;
+}
+function newGame(){
+ clearInterval(timer);timer=null;deck=shuffle([...symbols,...symbols]);first=null;second=null;locked=false;moves=0;matches=0;seconds=0;started=false;hints=0;
+ movesEl.textContent="0";timeEl.textContent="00:00";message.textContent="دور على كل زوج متشابه 👀";overlay.classList.remove("show");board.innerHTML="";
+ deck.forEach((s,i)=>board.appendChild(makeCard(s,i)));
+}
+function flip(card,symbol){
+ if(locked||card.classList.contains("flipped")||card.classList.contains("matched"))return;
+ startTimer();card.classList.add("flipped");card.setAttribute("aria-label",symbol);
+ if(!first){first={card,symbol};return}
+ second={card,symbol};moves++;movesEl.textContent=moves;
+ if(first.symbol===second.symbol){
+  first.card.classList.add("matched");second.card.classList.add("matched");matches++;
+  first=null;second=null;message.textContent="صح! لقيت زوج متطابق ✨";
+  if(matches===symbols.length)finish();
+ }else{
+  locked=true;message.textContent="مش متطابقين، جرّب تفتكر مكانهم";
+  const a=first,b=second;first=null;second=null;
+  setTimeout(()=>{a.card.classList.remove("flipped");b.card.classList.remove("flipped");a.card.setAttribute("aria-label","كارت مخفي");b.card.setAttribute("aria-label","كارت مخفي");locked=false},750);
+ }
+}
+function finish(){
+ clearInterval(timer);timer=null;
+ let record=false;
+ try{const old=getBest();if(!old||moves<old){localStorage.setItem(BEST_KEY,String(moves));record=true}}catch(e){}
+ showBest();result.textContent="أنهيت اللعبة في "+fmt(seconds)+" وبعدد "+moves+" حركة."+(record?" رقم قياسي جديد على جهازك!":"");
+ message.textContent="كل الأزواج اتطابقت! برافو 🎉";
+ setTimeout(()=>overlay.classList.add("show"),450);
+}
+document.getElementById("restart").addEventListener("click",newGame);
+document.getElementById("again").addEventListener("click",newGame);
+document.getElementById("close").addEventListener("click",()=>overlay.classList.remove("show"));
+document.getElementById("hint").addEventListener("click",()=>{
+ if(locked)return;
+ const hidden=[...board.querySelectorAll(".card:not(.flipped):not(.matched)")];
+ if(hidden.length===0)return;
+ startTimer();hints++;
+ hidden.forEach(c=>c.classList.add("hinting"));
+ const available=hidden.slice(0,2);
+ available.forEach(c=>c.classList.add("flipped"));
+ message.textContent="تلميح سريع! الحركات مش بتزيد 💡";
+ setTimeout(()=>{available.forEach(c=>{if(!c.classList.contains("matched")&&c!==first?.card&&c!==second?.card)c.classList.remove("flipped")})},650);
+});
+showBest();newGame();
+})();
+</script>
+</body>
+</html>
