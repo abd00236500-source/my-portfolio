@@ -1,0 +1,112 @@
+/* تطوير بصري لصفحة ABDO */
+.about-page {
+    max-width: 820px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(145deg, rgba(8,18,38,.94), rgba(5,10,23,.91));
+    box-shadow: 0 0 45px #168bff18, inset 0 0 35px #55c7ff08;
+}
+
+.about-page::before {
+    content: "";
+    position: absolute;
+    width: 230px;
+    height: 230px;
+    top: 150px;
+    right: -150px;
+    border-radius: 50%;
+    background: #168bff20;
+    filter: blur(55px);
+    pointer-events: none;
+}
+
+.profile-visual {
+    gap: 18px;
+    perspective: 800px;
+}
+
+.avatar, .monogram, .orb {
+    position: relative;
+    overflow: hidden;
+    transition: transform .35s ease, box-shadow .35s ease;
+}
+
+.avatar {
+    border: 2px solid #55c7ff;
+    box-shadow: 0 0 18px #168bff55, inset 0 0 18px #55c7ff30;
+}
+
+.avatar::after, .monogram::after {
+    content: "";
+    position: absolute;
+    inset: -70%;
+    background: linear-gradient(115deg, transparent 42%, #ffffff40 50%, transparent 58%);
+    transform: translateX(-65%) rotate(15deg);
+    animation: abdoShine 5s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.monogram {
+    background: linear-gradient(145deg, #1a4775, #091326 65%, #12365a);
+    border: 1px solid #8bdcff;
+    box-shadow: 7px 8px 0 #06101f, 0 0 28px #168bff35;
+    transform: perspective(500px) rotateY(-12deg) rotateX(5deg);
+}
+
+.orb {
+    box-shadow: inset -15px -12px 24px #0009, 0 0 35px #168bff55;
+}
+
+.bio-card {
+    position: relative;
+    background: linear-gradient(125deg, #12233bdc, #0a1426ed);
+    border-color: #55c7ff35;
+    box-shadow: 0 8px 25px #0002;
+    transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+
+.bio-card:hover {
+    transform: translateY(-3px);
+    border-color: #55c7ff99;
+    box-shadow: 0 12px 30px #168bff18;
+}
+
+.detail {
+    transition: background .25s ease, transform .25s ease;
+}
+
+.detail:hover {
+    background: #1b3555;
+    transform: translateY(-2px);
+}
+
+.skill {
+    transition: transform .2s ease, background .2s ease;
+}
+
+.skill:hover {
+    transform: translateY(-3px);
+    background: #55c7ff28;
+}
+
+.profile-name {
+    text-shadow: 0 0 25px #168bff35;
+}
+
+@keyframes abdoShine {
+    0%, 65%, 100% { transform: translateX(-65%) rotate(15deg); }
+    30% { transform: translateX(65%) rotate(15deg); }
+}
+
+@media (max-width: 420px) {
+    .profile-visual { gap: 10px; }
+    .bio-card { margin-top: 15px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .avatar, .monogram, .orb, .bio-card, .detail, .skill {
+        animation: none !important;
+        transition: none !important;
+    }
+    .avatar::after, .monogram::after { animation: none !important; }
+}
