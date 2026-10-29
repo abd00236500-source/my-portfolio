@@ -93,7 +93,9 @@ const bestEl=document.getElementById("best");
 const message=document.getElementById("message");
 const overlay=document.getElementById("overlay");
 const result=document.getElementById("result");
-let deck=[],first=null,second=null,locked=false,moves=0,matches=0,seconds=0,started=false,timer=null,hints=0,level=1,pairCount=4;
+const LEVEL_KEY="abdo_arcade_memory_level_v1";
+function getSavedLevel(){try{return Math.max(1,Math.min(symbols.length,Number(localStorage.getItem(LEVEL_KEY))||1))}catch(e){return 1}}
+let deck=[],first=null,second=null,locked=false,moves=0,matches=0,seconds=0,started=false,timer=null,hints=0,level=getSavedLevel(),pairCount=4;
 const BEST_KEY="abdo_arcade_memory_best_v1";
 function getBest(){try{return Number(localStorage.getItem(BEST_KEY))||0}catch(e){return 0}}
 function showBest(){const b=getBest();bestEl.textContent=b?b+" حركة":"—"}
@@ -111,7 +113,8 @@ function makeCard(symbol,index){
  return button;
 }
 function newGame(nextLevel=false){
- if(nextLevel)level++;
+ if(nextLevel)level=Math.min(level+1,symbols.length);
+ try{localStorage.setItem(LEVEL_KEY,String(level))}catch(e){}
  pairCount=Math.min(4+(level-1)*2,symbols.length);
  const cols=pairCount<=4?2:pairCount<=6?3:4;
  board.style.setProperty("--cols",cols);
