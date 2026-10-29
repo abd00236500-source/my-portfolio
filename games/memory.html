@@ -19,11 +19,11 @@ nav{display:flex;align-items:center;justify-content:space-between;gap:10px}
 h1{font-size:clamp(30px,8vw,43px);margin:10px 0}
 h1 span{color:var(--cyan)}
 .hero p{color:var(--muted);font-size:14px;line-height:1.8;margin:0}
-.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:20px 0}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:20px 0}
 .stat{background:#101a2e;border:1px solid #263e62;border-radius:14px;text-align:center;padding:12px 5px}
 .stat small{display:block;color:var(--muted);font-size:11px;margin-bottom:7px}
 .stat strong{font-size:22px;color:var(--cyan);font-variant-numeric:tabular-nums}
-.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;perspective:900px}
+.board{display:grid;grid-template-columns:repeat(var(--cols,2),minmax(0,1fr));gap:10px;perspective:900px}
 .card{position:relative;aspect-ratio:1/1;border:0;background:transparent;padding:0;cursor:pointer;perspective:600px;-webkit-tap-highlight-color:transparent}
 .inner{position:absolute;inset:0;transition:transform .35s;transform-style:preserve-3d}
 .card.flipped .inner,.card.matched .inner{transform:rotateY(180deg)}
@@ -63,6 +63,7 @@ h1 span{color:var(--cyan)}
 <section class="stats" aria-label="إحصائيات اللعبة">
 <div class="stat"><small>الحركات</small><strong id="moves">0</strong></div>
 <div class="stat"><small>الوقت</small><strong id="time">00:00</strong></div>
+<div class="stat"><small>المستوى</small><strong id="level">1</strong></div>
 <div class="stat"><small>أفضل نتيجة</small><strong id="best">—</strong></div>
 </section>
 <section class="board" id="board" aria-label="بطاقات لعبة الذاكرة"></section>
@@ -71,7 +72,7 @@ h1 span{color:var(--cyan)}
 <button class="action primary" id="restart">🔄 لعبة جديدة</button>
 <button class="action" id="hint">💡 تلميح</button>
 </div>
-<p class="tip">طابق الرموز الثمانية • أفضل نتيجة تُحفظ على نفس المتصفح والجهاز</p>
+<p class="tip">ابدأ بـ8 كروت؛ كل مرحلة تضيف 4 كروت • أفضل نتيجة محفوظة على جهازك</p>
 </main>
 <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="winTitle">
 <div class="dialog">
@@ -84,7 +85,7 @@ h1 span{color:var(--cyan)}
 </div>
 <script>
 (function(){
-const symbols=["🚀","🎮","💎","👾","⚡","🪐","🧩","🏆"];
+const symbols=["🚀","🎮","💎","👾","⚡","🪐","🧩","🏆","🎯","🌟","🔥","🎲","🛸","🐉","👑","💠","🎧","🦊","🍀","🌈","⚽","🎨","🧿","🪄","🦄","🍉","🧸","🎁","🌙","☀️","🪙","🏅","🎃","🐼","🦋","🍕"];
 const board=document.getElementById("board");
 const movesEl=document.getElementById("moves");
 const timeEl=document.getElementById("time");
@@ -92,7 +93,7 @@ const bestEl=document.getElementById("best");
 const message=document.getElementById("message");
 const overlay=document.getElementById("overlay");
 const result=document.getElementById("result");
-let deck=[],first=null,second=null,locked=false,moves=0,matches=0,seconds=0,started=false,timer=null,hints=0;
+let deck=[],first=null,second=null,locked=false,moves=0,matches=0,seconds=0,started=false,timer=null,hints=0,level=1,pairCount=4;
 const BEST_KEY="abdo_arcade_memory_best_v1";
 function getBest(){try{return Number(localStorage.getItem(BEST_KEY))||0}catch(e){return 0}}
 function showBest(){const b=getBest();bestEl.textContent=b?b+" حركة":"—"}
@@ -109,8 +110,13 @@ function makeCard(symbol,index){
  button.dataset.index=index;
  return button;
 }
-function newGame(){
- clearInterval(timer);timer=null;deck=shuffle([...symbols,...symbols]);first=null;second=null;locked=false;moves=0;matches=0;seconds=0;started=false;hints=0;
+function newGame(nextLevel=false){
+ if(nextLevel)level++;
+ pairCount=Math.min(4+(level-1)*2,symbols.length);
+ const cols=pairCount<=4?2:pairCount<=6?3:4;
+ board.style.setProperty("--cols",cols);
+ document.getElementById("level").textContent=level;
+ clearInterval(timer);timer=null;deck=shuffle(symbols.slice(0,pairCount).concat(symbols.slice(0,pairCount)));first=null;second=null;locked=false;moves=0;matches=0;seconds=0;started=false;hints=0;
  movesEl.textContent="0";timeEl.textContent="00:00";message.textContent="دور على كل زوج متشابه 👀";overlay.classList.remove("show");board.innerHTML="";
  deck.forEach((s,i)=>board.appendChild(makeCard(s,i)));
 }
@@ -122,7 +128,7 @@ function flip(card,symbol){
  if(first.symbol===second.symbol){
   first.card.classList.add("matched");second.card.classList.add("matched");matches++;
   first=null;second=null;message.textContent="صح! لقيت زوج متطابق ✨";
-  if(matches===symbols.length)finish();
+  if(matches===pairCount)finish();
  }else{
   locked=true;message.textContent="مش متطابقين، جرّب تفتكر مكانهم";
   const a=first,b=second;first=null;second=null;
@@ -137,8 +143,8 @@ function finish(){
  message.textContent="كل الأزواج اتطابقت! برافو 🎉";
  setTimeout(()=>overlay.classList.add("show"),450);
 }
-document.getElementById("restart").addEventListener("click",newGame);
-document.getElementById("again").addEventListener("click",newGame);
+document.getElementById("restart").addEventListener("click",()=>newGame(false));
+document.getElementById("again").addEventListener("click",()=>newGame(true));
 document.getElementById("close").addEventListener("click",()=>overlay.classList.remove("show"));
 document.getElementById("hint").addEventListener("click",()=>{
  if(locked)return;
