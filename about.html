@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080d1a">
+<title>عنّي | ABDO</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.about-page{max-width:760px;margin:auto}
+.profile-visual{display:flex;justify-content:center;align-items:center;gap:14px;flex-wrap:wrap;margin:28px 0}
+.avatar,.monogram,.orb{width:112px;height:112px;border-radius:24px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#142c50,#080d1a);border:1px solid #55c7ff88;box-shadow:0 0 25px #168bff22}
+.avatar{border-radius:50%;font-size:52px;background:radial-gradient(circle at 50% 35%,#246ca0,#10182c 68%)}
+.monogram{font-size:27px;font-weight:900;letter-spacing:1px;color:#fff;text-shadow:0 0 15px #55c7ff;transform:perspective(300px) rotateY(-8deg)}
+.orb{border-radius:50%;background:radial-gradient(circle at 30% 25%,#55c7ff,#14518a 30%,#080d1a 72%);animation:floatOrb 3s ease-in-out infinite;box-shadow:inset -12px -10px 25px #0008,0 0 28px #168bff44}
+.orb:before{content:"";width:65px;height:65px;border:2px solid #9ce5ff;border-radius:50%;box-shadow:0 0 12px #55c7ff;transform:rotateX(65deg)}
+.profile-name{font-size:34px;margin:10px 0;color:#fff}
+.profile-subtitle{color:#55c7ff;font-size:17px}
+.bio-card{margin-top:20px;padding:22px;text-align:right;background:#0e1a2dd9;border:1px solid #55c7ff35;border-radius:20px}
+.bio-card h2{color:#55c7ff;margin-bottom:12px;font-size:22px}
+.bio-card p{font-size:16px}
+.details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.detail{padding:14px;background:#152640;border-radius:13px;border:1px solid #55c7ff24}
+.detail small{display:block;color:#9eb7d4;margin-bottom:6px}
+.detail strong{overflow-wrap:anywhere}
+.skill-list{display:flex;flex-wrap:wrap;gap:10px}
+.skill{padding:8px 14px;border-radius:10px;color:#8bdcff;background:#55c7ff15;border:1px solid #55c7ff55}
+@keyframes floatOrb{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(8deg)}}
+@media(max-width:420px){.profile-visual{gap:9px}.avatar,.monogram,.orb{width:88px;height:88px;border-radius:20px}.avatar{border-radius:50%;font-size:42px}.monogram{font-size:22px}.orb:before{width:52px;height:52px}.profile-name{font-size:29px}.details{grid-template-columns:1fr}.bio-card{padding:17px}}
+@media(prefers-reduced-motion:reduce){.orb{animation:none}}
+</style>
+</head>
+<body>
+<main class="container about-page">
+<nav class="navbar">
+<a href="index.html" class="logo">ABDO<span>.</span></a>
+<a href="index.html" class="nav-link">الصفحة الرئيسية</a>
+</nav>
+
+<header class="hero">
+<p class="welcome">ملفي الشخصي</p>
+<div class="profile-visual" aria-label="أفاتار تقني وشعار ومجسم ثلاثي الأبعاد">
+<div class="avatar" role="img" aria-label="صورة رمزية تقنية">⌘</div>
+<div class="monogram" aria-label="شعار ABDO">ABDO</div>
+<div class="orb" role="img" aria-label="مجسم كروي ثلاثي الأبعاد"></div>
+</div>
+<h1 class="profile-name">عبدالرحمن حسام</h1>
+<p class="profile-subtitle">مهتم بالبرمجة وتطوير المشروعات الرقمية</p>
+</header>
+
+<section class="bio-card">
+<h2>نبذة عني</h2>
+<p>أنا عبدالرحمن حسام، طالب في الصف الأول الإعدادي، أهتم بمجال البرمجة وأسعى إلى تطوير مهاراتي التقنية واكتساب المزيد من المعرفة.</p>
+<p>أتعلم لغة Python، بالإضافة إلى HTML وCSS، وأعمل على تطوير مهاراتي في كتابة الأكواد وإنشاء صفحات الويب. أطمح إلى أن أصبح مبرمجًا قادرًا على تحويل الأفكار إلى مشروعات رقمية مميزة.</p>
+</section>
+
+<section class="bio-card">
+<h2>المعلومات الشخصية</h2>
+<div class="details">
+<div class="detail"><small>الاسم بالكامل</small><strong>عبدالرحمن حسام</strong></div>
+<div class="detail"><small>المرحلة التعليمية</small><strong>الصف الأول الإعدادي</strong></div>
+<div class="detail"><small>الاهتمام الرئيسي</small><strong>البرمجة</strong></div>
+<div class="detail"><small>حالة المشروعات</small><strong>قيد العمل</strong></div>
+</div>
+</section>
+
+<section class="bio-card">
+<h2>المهارات التقنية</h2>
+<div class="skill-list">
+<span class="skill">Python</span>
+<span class="skill">HTML</span>
+<span class="skill">CSS</span>
+</div>
+</section>
+
+<section class="bio-card">
+<h2>طموحي</h2>
+<p>أسعى إلى مواصلة التعلم والتدرب على البرمجة، وبناء مشروعات رقمية تساعدني على اكتساب الخبرة وتطوير أفكاري.</p>
+</section>
+
+<div class="buttons" style="margin-top:24px">
+<a href="projects.html" class="btn primary">استكشف مشروعاتي</a>
+<a href="index.html" class="btn secondary">العودة للرئيسية</a>
+</div>
+<footer>صُنع بشغف بواسطة عبدو © 2026</footer>
+</main>
+</body>
+</html>
