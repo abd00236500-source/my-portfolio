@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مشاريعي | ABDO</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; color: #fff; background: #070b16; font-family: Arial, sans-serif; }
+    .projects-page { min-height: 100vh; padding: 25px 18px 50px; background: radial-gradient(ellipse at top, #14264a 0%, #070b16 65%); }
+    .topbar { max-width: 1050px; margin: auto; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .logo { color: #55d8ff; font-weight: 900; font-size: 25px; letter-spacing: 2px; }
+    .back { color: #fff; text-decoration: none; border: 1px solid #344765; padding: 10px 15px; border-radius: 12px; }
+    .intro { text-align: center; padding: 55px 0 35px; }
+    .intro h1 { font-size: clamp(30px, 7vw, 48px); margin: 0 0 14px; }
+    .intro h1 span { color: #55d8ff; }
+    .intro p { color: #aab8d2; line-height: 1.9; margin: 0; }
+    .grid { max-width: 1050px; margin: auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; perspective: 1000px; }
+    .project-card { position: relative; min-height: 230px; padding: 25px; overflow: hidden; border: 1px solid #263e62; border-radius: 22px; background: linear-gradient(145deg, rgba(23,43,76,.96), rgba(11,18,35,.98)); box-shadow: 0 15px 35px #0005; transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease; }
+    .project-card:before { content: ""; position: absolute; width: 150px; height: 150px; border-radius: 50%; background: #35cfff18; filter: blur(12px); top: -55px; left: -35px; }
+    .project-card:active { transform: scale(.97) rotateX(2deg); }
+    .project-card:hover { transform: translateY(-7px) rotateX(2deg); border-color: #55d8ff; box-shadow: 0 20px 45px #008cff25; }
+    .number { color: #55d8ff; font-size: 13px; letter-spacing: 2px; }
+    .symbol { width: 58px; height: 58px; display: grid; place-items: center; margin: 20px 0 16px; border-radius: 17px; background: #55d8ff15; border: 1px solid #55d8ff40; font-size: 29px; }
+    .project-card h2 { margin: 0 0 10px; font-size: 22px; }
+    .project-card p { color: #aab8d2; line-height: 1.8; font-size: 14px; margin: 0 0 20px; }
+    .open { display: inline-block; color: #06101e; background: #55d8ff; padding: 11px 16px; border-radius: 11px; text-decoration: none; font-weight: bold; }
+    .footer { text-align: center; color: #7889a7; font-size: 13px; margin-top: 38px; }
+    @media(max-width:600px) { .grid { grid-template-columns: 1fr; gap: 16px; } .intro { padding: 42px 0 28px; } .project-card { min-height: 210px; } }
+    @media(prefers-reduced-motion:reduce) { .project-card { transition: none; } }
+  </style>
+</head>
+<body>
+  <main class="projects-page">
+    <nav class="topbar">
+      <div class="logo">ABDO.</div>
+      <a class="back" href="index.html">← الصفحة الرئيسية</a>
+    </nav>
+
+    <header class="intro">
+      <h1>معرض <span>مشاريعي</span></h1>
+      <p>أهلاً بيك في عالمي الرقمي 🚀<br>اختار القسم اللي تحب تستكشفه</p>
+    </header>
+
+    <section class="grid">
+      <article class="project-card">
+        <div class="number">SECTION 01</div>
+        <div class="symbol">🌐</div>
+        <h2>موقع عبدو</h2>
+        <p>مواقع الويب والتصميمات اللي بعملها باستخدام HTML وCSS.</p>
+        <a class="open" href="#website">استكشف القسم ←</a>
+      </article>
+
+      <article class="project-card">
+        <div class="number">SECTION 02</div>
+        <div class="symbol">🎮</div>
+        <h2>واجهة الألعاب</h2>
+        <p>أفكار الألعاب وواجهات التحكم والتجارب التفاعلية.</p>
+        <a class="open" href="#games">استكشف القسم ←</a>
+      </article>
+
+      <article class="project-card">
+        <div class="number">SECTION 03</div>
+        <div class="symbol">🧊</div>
+        <h2>الواجهة التجريبية</h2>
+        <p>واجهات مبتكرة وتجارب بصرية بتصميم عصري.</p>
+        <a class="open" href="#prototype">استكشف القسم ←</a>
+      </article>
+
+      <article class="project-card">
+        <div class="number">SECTION 04</div>
+        <div class="symbol">📱</div>
+        <h2>التطبيقات</h2>
+        <p>تطبيقات وأفكار برمجية وتجارب مخصصة للموبايل.</p>
+        <a class="open" href="#apps">استكشف القسم ←</a>
+      </article>
+    </section>
+
+    <div class="footer">ABDO © 2026 — أفكار تتحول لمشروعات</div>
+  </main>
+</body>
+</html>
