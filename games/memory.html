@@ -140,6 +140,10 @@ function flip(card,symbol){
 }
 function finish(){
  clearInterval(timer);timer=null;
+ try{
+  const nextLevel=Math.min(level+1,symbols.length);
+  localStorage.setItem(LEVEL_KEY,String(nextLevel));
+ }catch(e){}
  let record=false;
  try{const old=getBest();if(!old||moves<old){localStorage.setItem(BEST_KEY,String(moves));record=true}}catch(e){}
  showBest();result.textContent="أنهيت اللعبة في "+fmt(seconds)+" وبعدد "+moves+" حركة."+(record?" رقم قياسي جديد على جهازك!":"");
