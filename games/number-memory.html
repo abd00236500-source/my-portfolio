@@ -76,16 +76,16 @@ h1 span{color:var(--cyan)}
 (function(){
 const KEY="abdo_arcade_number_memory_v1";
 const $=id=>document.getElementById(id);
-let saved={best:1,score:0};
+let saved={best:1,score:0,progress:1,currentScore:0};
 try{
  const data=JSON.parse(localStorage.getItem(KEY));
- if(data){saved.best=Math.max(1,Number(data.best)||1);saved.score=Math.max(0,Number(data.score)||0);}
+ if(data){saved.best=Math.max(1,Number(data.best)||1);saved.score=Math.max(0,Number(data.score)||0);saved.progress=Math.max(1,Number(data.progress)||1);saved.currentScore=Math.max(0,Number(data.currentScore)||0);}
 }catch(e){}
 
-let level=1,score=0,current="",timer=null,state="idle";
+let level=saved.progress,score=saved.currentScore,current="",timer=null,state="idle";
 
 function save(){
- try{localStorage.setItem(KEY,JSON.stringify({best:saved.best,score:saved.score}));}catch(e){}
+ try{localStorage.setItem(KEY,JSON.stringify({best:saved.best,score:saved.score,progress:saved.progress,currentScore:score}));}catch(e){}
 }
 function stats(){
  $("level").textContent=level;
@@ -129,6 +129,7 @@ function check(){
  if(value===current){
   score+=level*10;
   level++;
+  saved.progress=level;
   if(level>saved.best)saved.best=level;
   saved.score=Math.max(saved.score,score);
   save();stats();
@@ -145,12 +146,12 @@ function check(){
  $("start").style.display="block";
  $("start").textContent="العب مرة تانية ↻";
 }
-$("start").addEventListener("click",()=>{if(state==="done" && $("status").textContent!=="إجابة صحيحة!"){level=1;score=0;stats();}start();});
+$("start").addEventListener("click",()=>{if(state==="done" && $("status").textContent!=="إجابة صحيحة!"){level=1;score=0;saved.progress=1;score=0;save();stats();}start();});
 $("check").addEventListener("click",check);
 $("answer").addEventListener("keydown",e=>{if(e.key==="Enter")check();});
 $("reset").addEventListener("click",()=>{
  if(!confirm("متأكد إنك عايز تمسح أعلى مستوى والنقاط المحفوظة؟"))return;
- clearTimer();saved={best:1,score:0};level=1;score=0;state="idle";
+ clearTimer();saved={best:1,score:0,progress:1,currentScore:0};level=1;score=0;state="idle";
  try{localStorage.removeItem(KEY);}catch(e){}
  $("number").textContent="🧠";
  $("status").textContent="اضغط ابدأ عشان نختبر ذاكرتك!";
