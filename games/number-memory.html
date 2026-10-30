@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070b16">
+<title>Number Memory | ABDO ARCADE</title>
+<style>
+:root{--bg:#070b16;--panel:#111c32;--cyan:#55d8ff;--muted:#aab8d2;--green:#58ffc5;--red:#ff5874}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#172d50 0%,var(--bg) 68%);color:#fff;font-family:Arial,sans-serif}
+button,input{font:inherit;touch-action:manipulation}
+.wrap{width:min(100%,600px);margin:auto;padding:18px 15px 30px}
+nav{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.logo{font-weight:900;color:var(--cyan);font-size:19px;letter-spacing:1px}
+.back{color:#fff;text-decoration:none;border:1px solid #344765;border-radius:11px;padding:9px 12px;font-size:13px}
+.hero{text-align:center;padding:30px 0 20px}
+.tag{color:var(--cyan);font-size:11px;letter-spacing:3px}
+h1{font-size:clamp(30px,8vw,43px);margin:10px 0}
+h1 span{color:var(--cyan)}
+.hero p{color:var(--muted);font-size:14px;line-height:1.8}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:20px 0}
+.stat{background:#101a2e;border:1px solid #263e62;border-radius:14px;text-align:center;padding:13px 5px}
+.stat small{display:block;color:var(--muted);font-size:11px;margin-bottom:7px}
+.stat strong{font-size:23px;color:var(--cyan);font-variant-numeric:tabular-nums}
+.panel{background:#101a2e;border:1px solid #263e62;border-radius:22px;padding:22px 16px;text-align:center}
+.number{min-height:125px;display:grid;place-items:center;color:var(--cyan);font-size:clamp(38px,12vw,65px);font-weight:900;letter-spacing:7px;text-shadow:0 0 25px #55d8ff55;font-variant-numeric:tabular-nums}
+.status{color:var(--muted);font-size:14px;line-height:1.8;min-height:28px}
+.input{width:100%;margin-top:15px;background:#070f20;border:1px solid #36577c;border-radius:13px;padding:15px;color:white;text-align:center;font-size:25px;letter-spacing:5px;outline:none}
+.input:focus{border-color:var(--cyan)}
+.actions{display:flex;gap:10px;margin-top:15px}
+.action{flex:1;border:1px solid #36577c;background:#111c32;color:#fff;border-radius:12px;padding:13px 8px;cursor:pointer}
+.action.primary{background:var(--cyan);color:#06101e;border-color:var(--cyan);font-weight:bold}
+.action:disabled{opacity:.45;cursor:not-allowed}
+.message{min-height:25px;text-align:center;color:var(--green);font-size:14px;margin:14px 0 0;line-height:1.7}
+.tip{text-align:center;color:#7889a7;font-size:12px;line-height:1.8;margin-top:20px}
+</style>
+</head>
+<body>
+<main class="wrap">
+<nav>
+<div class="logo">ABDO ARCADE</div>
+<a class="back" href="../games.html">← قائمة الألعاب</a>
+</nav>
+
+<header class="hero">
+<div class="tag">GAME 05 · NUMBER MEMORY</div>
+<h1>ذاكرة <span>الأرقام</span> 🧠</h1>
+<p>احفظ الرقم قبل ما يختفي، واكتبه من ذاكرتك. كل مستوى أصعب من اللي قبله!</p>
+</header>
+
+<section class="stats">
+<div class="stat"><small>المستوى</small><strong id="level">1</strong></div>
+<div class="stat"><small>أعلى مستوى</small><strong id="best">1</strong></div>
+<div class="stat"><small>النقاط</small><strong id="score">0</strong></div>
+</section>
+
+<section class="panel">
+<div class="number" id="number">🧠</div>
+<div class="status" id="status">اضغط ابدأ عشان نختبر ذاكرتك!</div>
+<input class="input" id="answer" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="اكتب الرقم هنا" style="display:none">
+<div class="actions">
+<button class="action primary" id="start">ابدأ اللعب 🎮</button>
+<button class="action" id="check" style="display:none">تأكيد الإجابة</button>
+</div>
+<div class="message" id="message" aria-live="polite"></div>
+</section>
+
+<div class="actions">
+<button class="action" id="reset">إعادة ضبط النتائج 🗑️</button>
+</div>
+<p class="tip">تقدمك وأعلى مستوى يتم حفظهما تلقائيًا على جهازك.</p>
+</main>
+
+<script>
+(function(){
+const KEY="abdo_arcade_number_memory_v1";
+const $=id=>document.getElementById(id);
+let saved={best:1,score:0};
+try{
+ const data=JSON.parse(localStorage.getItem(KEY));
+ if(data){saved.best=Math.max(1,Number(data.best)||1);saved.score=Math.max(0,Number(data.score)||0);}
+}catch(e){}
+
+let level=1,score=0,current="",timer=null,state="idle";
+
+function save(){
+ try{localStorage.setItem(KEY,JSON.stringify({best:saved.best,score:saved.score}));}catch(e){}
+}
+function stats(){
+ $("level").textContent=level;
+ $("best").textContent=saved.best;
+ $("score").textContent=score;
+}
+function clearTimer(){if(timer){clearTimeout(timer);timer=null;}}
+function makeNumber(){
+ let length=Math.min(3+level-1,12);
+ current="";
+ for(let i=0;i<length;i++)current+=Math.floor(Math.random()*10);
+}
+function start(){
+ clearTimer();
+ state="show";
+ $("answer").style.display="none";
+ $("answer").value="";
+ $("check").style.display="none";
+ $("start").style.display="none";
+ $("message").textContent="";
+ makeNumber();
+ $("number").textContent=current;
+ $("status").textContent="احفظ الرقم كويس... 👀";
+ const duration=Math.max(1100,3500-(level-1)*120);
+ timer=setTimeout(()=>{
+  timer=null;
+  if(state!=="show")return;
+  state="answer";
+  $("number").textContent="❔";
+  $("status").textContent="اكتب الرقم اللي شوفته!";
+  $("answer").style.display="block";
+  $("check").style.display="block";
+  $("answer").focus();
+ },duration);
+}
+function check(){
+ if(state!=="answer")return;
+ const value=$("answer").value.trim();
+ if(!value){$("message").textContent="اكتب الرقم الأول!";return;}
+ state="done";
+ if(value===current){
+  score+=level*10;
+  level++;
+  if(level>saved.best)saved.best=level;
+  saved.score=Math.max(saved.score,score);
+  save();stats();
+  $("number").textContent="✅";
+  $("status").textContent="إجابة صحيحة!";
+  $("message").textContent="ممتاز! استعد للمستوى التالي 🔥";
+ }else{
+  $("number").textContent="❌";
+  $("status").textContent="الإجابة الصحيحة كانت: "+current;
+  $("message").textContent="انتهت المحاولة. تقدر تبدأ من جديد وتحسن نتيجتك!";
+ }
+ $("answer").style.display="none";
+ $("check").style.display="none";
+ $("start").style.display="block";
+ $("start").textContent="العب مرة تانية ↻";
+}
+$("start").addEventListener("click",()=>{if(state==="done" && $("status").textContent!=="إجابة صحيحة!"){level=1;score=0;stats();}start();});
+$("check").addEventListener("click",check);
+$("answer").addEventListener("keydown",e=>{if(e.key==="Enter")check();});
+$("reset").addEventListener("click",()=>{
+ if(!confirm("متأكد إنك عايز تمسح أعلى مستوى والنقاط المحفوظة؟"))return;
+ clearTimer();saved={best:1,score:0};level=1;score=0;state="idle";
+ try{localStorage.removeItem(KEY);}catch(e){}
+ $("number").textContent="🧠";
+ $("status").textContent="اضغط ابدأ عشان نختبر ذاكرتك!";
+ $("answer").value="";$("answer").style.display="none";
+ $("check").style.display="none";$("start").style.display="block";
+ $("start").textContent="ابدأ اللعب 🎮";
+ $("message").textContent="تم مسح النتائج.";
+ stats();
+});
+stats();
+})();
+</script>
+</body>
+</html>
