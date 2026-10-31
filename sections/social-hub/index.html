@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080d1a">
+<title>ABDO | Social Hub</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: sans-serif;
+    background:
+      linear-gradient(rgba(5,10,25,.72),rgba(5,10,25,.88)),
+      url("../../background.png") center/cover fixed;
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 22px;
+}
+
+.container {
+    width: 100%;
+    max-width: 480px;
+    padding: 30px 22px;
+    text-align: center;
+    background: rgba(8,13,26,.82);
+    border: 1px solid rgba(85,199,255,.4);
+    border-radius: 26px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 15px 60px rgba(0,0,0,.4);
+}
+
+.logo {
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: white;
+}
+
+.logo span {
+    color: #55c7ff;
+}
+
+.line {
+    width: 65px;
+    height: 3px;
+    background: #55c7ff;
+    margin: 15px auto 25px;
+    border-radius: 10px;
+}
+
+h2 {
+    color: #55c7ff;
+    font-size: 23px;
+    margin-bottom: 12px;
+}
+
+.description {
+    color: #c5cee0;
+    line-height: 1.9;
+    margin-bottom: 28px;
+    font-size: 15px;
+}
+
+.social-list {
+    display: grid;
+    gap: 14px;
+}
+
+.social {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 17px 19px;
+    border-radius: 15px;
+    border: 1px solid rgba(85,199,255,.25);
+    background: rgba(255,255,255,.055);
+    color: white;
+    text-decoration: none;
+    transition: .3s;
+}
+
+.social:hover {
+    transform: translateY(-4px);
+    background: rgba(85,199,255,.15);
+    border-color: #55c7ff;
+    box-shadow: 0 5px 25px rgba(85,199,255,.12);
+}
+
+.social-info {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.icon {
+    font-size: 27px;
+}
+
+.name {
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.username {
+    color: #aebdd3;
+    font-size: 12px;
+    margin-top: 4px;
+    direction: ltr;
+    text-align: right;
+}
+
+.arrow {
+    color: #55c7ff;
+    font-size: 22px;
+}
+
+.back {
+    display: inline-block;
+    margin-top: 27px;
+    color: #55c7ff;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+footer {
+    color: #7f91aa;
+    font-size: 12px;
+    margin-top: 28px;
+}
+
+</style>
+</head>
+
+<body>
+
+<main class="container">
+
+    <div class="logo">ABDO<span>.</span></div>
+    <div class="line"></div>
+
+    <h2>مرحباً بيك في حساباتي</h2>
+
+    <p class="description">
+        كل حساباتي وروابط التواصل الخاصة بيا
+        في مكان واحد. اختار المنصة اللي تحب تزورني عليها.
+    </p>
+
+    <div class="social-list">
+
+        <a class="social"
+           href="https://www.tiktok.com/@thedominant19"
+           target="_blank" rel="noopener noreferrer">
+            <div class="social-info">
+                <span class="icon">🎵</span>
+                <div>
+                    <div class="name">TikTok</div>
+                    <div class="username">@thedominant19</div>
+                </div>
+            </div>
+            <span class="arrow">←</span>
+        </a>
+
+        <a class="social"
+           href="https://www.facebook.com/share/19Y8r3nisT/"
+           target="_blank" rel="noopener noreferrer">
+            <div class="social-info">
+                <span class="icon">📘</span>
+                <div>
+                    <div class="name">Facebook</div>
+                    <div class="username">صفحتي على فيسبوك</div>
+                </div>
+            </div>
+            <span class="arrow">←</span>
+        </a>
+
+        <a class="social"
+           href="https://wa.me/201285999485"
+           target="_blank" rel="noopener noreferrer">
+            <div class="social-info">
+                <span class="icon">💬</span>
+                <div>
+                    <div class="name">WhatsApp</div>
+                    <div class="username">01285999485</div>
+                </div>
+            </div>
+            <span class="arrow">←</span>
+        </a>
+
+        <a class="social"
+           href="https://t.me/Thedominant11"
+           target="_blank" rel="noopener noreferrer">
+            <div class="social-info">
+                <span class="icon">✈️</span>
+                <div>
+                    <div class="name">Telegram</div>
+                    <div class="username">@Thedominant11</div>
+                </div>
+            </div>
+            <span class="arrow">←</span>
+        </a>
+
+    </div>
+
+    <a class="back" href="../../projects.html">
+        ← العودة إلى الأقسام
+    </a>
+
+    <footer>ABDO © 2026 — All Rights Reserved</footer>
+
+</main>
+
+</body>
+</html>
