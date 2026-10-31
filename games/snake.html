@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#070b16">
+<title>ABDO ARCADE | Snake</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at top,#172c50,#070b16 70%);color:white;font-family:Arial,sans-serif;text-align:center}
+main{max-width:500px;margin:auto;padding:20px 15px}
+h1{color:#55d8ff;font-size:34px}
+p{color:#aab8d2}
+.panel{background:#101b31;border:1px solid #344765;border-radius:20px;padding:15px;margin:15px 0}
+.stats{display:flex;justify-content:space-around;font-size:17px}
+canvas{display:block;width:min(100%,360px);height:auto;margin:15px auto;background:#081322;border:2px solid #55d8ff;border-radius:12px;touch-action:none}
+button{border:0;border-radius:12px;padding:13px 20px;background:#55d8ff;color:#06101e;font-weight:bold;font-size:16px;margin:5px;cursor:pointer}
+.controls{display:grid;grid-template-columns:repeat(3,65px);justify-content:center;gap:7px;margin-top:15px;direction:ltr}
+.controls button{padding:13px 0;margin:0;font-size:22px}
+.controls .empty{visibility:hidden}
+.back{display:inline-block;color:#55d8ff;text-decoration:none;margin-top:15px}
+</style>
+</head>
+<body>
+<main>
+<h1>🐍 ABDO SNAKE</h1>
+<p>اجمع الطعام وكبّر الثعبان وحاول تحقق أعلى نتيجة!</p>
+<div class="panel stats">
+<div>النقاط: <b id="score">0</b></div>
+<div>أفضل نتيجة: <b id="best">0</b></div>
+</div>
+<canvas id="game" width="360" height="360"></canvas>
+<div>
+<button id="start">ابدأ اللعب</button>
+<button id="pause">إيقاف مؤقت</button>
+</div>
+<div class="controls">
+<span class="empty"></span><button data-dir="up">▲</button><span class="empty"></span>
+<button data-dir="left">◀</button><button data-dir="down">▼</button><button data-dir="right">▶</button>
+</div>
+<p id="status">اضغط ابدأ اللعب للبدء</p>
+<a class="back" href="../games.html">← الرجوع للألعاب</a>
+</main>
+<script>
+const canvas=document.getElementById("game");
+const ctx=canvas.getContext("2d");
+const scoreEl=document.getElementById("score");
+const bestEl=document.getElementById("best");
+const statusEl=document.getElementById("status");
+const size=18, cells=20;
+let snake,food,dir,nextDir,score,timer,running=false,paused=false;
+let best=Number(localStorage.getItem("abdoSnakeBest")||0);
+bestEl.textContent=best;
+
+function foodPosition(){
+ let p;
+ do{p={x:Math.floor(Math.random()*cells),y:Math.floor(Math.random()*cells)}}
+ while(snake.some(s=>s.x===p.x&&s.y===p.y));
+ return p;
+}
+function draw(){
+ ctx.fillStyle="#081322";ctx.fillRect(0,0,360,360);
+ ctx.strokeStyle="#14263d";
+ for(let i=0;i<=360;i+=size){
+ ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,360);ctx.stroke();
+ ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(360,i);ctx.stroke();
+ }
+ ctx.fillStyle="#ffca55";
+ ctx.beginPath();ctx.arc(food.x*size+9,food.y*size+9,7,0,Math.PI*2);ctx.fill();
+ snake.forEach((s,i)=>{
+ ctx.fillStyle=i===0?"#55d8ff":"#2196b5";
+ ctx.fillRect(s.x*size+1,s.y*size+1,size-2,size-2);
+ });
+}
+function endGame(){
+ clearInterval(timer);running=false;paused=false;
+ statusEl.textContent="انتهت اللعبة! نتيجتك: "+score;
+ if(score>best){best=score;localStorage.setItem("abdoSnakeBest",best);bestEl.textContent=best;}
+}
+function step(){
+ if(!running||paused)return;
+ dir=nextDir;
+ const head={
+ x:(snake[0].x+dir.x+cells)%cells,
+ y:(snake[0].y+dir.y+cells)%cells
+ };
+ const eating=head.x===food.x&&head.y===food.y;
+ const body=eating?snake:snake.slice(0,-1);
+ if(body.some(s=>s.x===head.x&&s.y===head.y)){endGame();return;}
+ snake.unshift(head);
+ if(eating){
+ score+=10;scoreEl.textContent=score;
+ food=foodPosition();
+ clearInterval(timer);
+ timer=setInterval(step,Math.max(65,140-Math.floor(score/10)*5));
+ } else snake.pop();
+ draw();
+}
+function start(){
+ clearInterval(timer);
+ snake=[{x:10,y:10},{x:9,y:10},{x:8,y:10}];
+ dir={x:1,y:0};nextDir={x:1,y:0};
+ score=0;scoreEl.textContent=0;
+ food=foodPosition();running=true;paused=false;
+ statusEl.textContent="يلا اجمع الطعام!";
+ draw();timer=setInterval(step,140);
+}
+function change(d){
+ const dirs={
+ up:{x:0,y:-1},down:{x:0,y:1},
+ left:{x:-1,y:0},right:{x:1,y:0}
+ };
+ const n=dirs[d];
+ if(n&&!(n.x===-dir.x&&n.y===-dir.y))nextDir=n;
+}
+document.querySelectorAll("[data-dir]").forEach(b=>{
+ b.addEventListener("click",()=>change(b.dataset.dir));
+});
+document.addEventListener("keydown",e=>{
+ const keys={ArrowUp:"up",ArrowDown:"down",ArrowLeft:"left",ArrowRight:"right"};
+ if(keys[e.key]){e.preventDefault();change(keys[e.key]);}
+});
+document.getElementById("start").onclick=start;
+document.getElementById("pause").onclick=()=>{
+ if(!running)return;
+ paused=!paused;
+ statusEl.textContent=paused?"اللعبة متوقفة مؤقتًا":"اللعب مستمر!";
+};
+draw();
+</script>
+</body>
+</html>
+
