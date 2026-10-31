@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ABDO | الواجهة التجريبية</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;min-height:100vh;padding:24px 16px;
+ background:radial-gradient(ellipse at top,#17365c,#080d1b 65%);
+ color:#fff;font-family:Arial,sans-serif
+}
+header{max-width:900px;margin:25px auto 35px;text-align:center}
+.tag{color:#43e6ff;letter-spacing:3px;font-size:12px}
+h1{font-size:32px;margin:14px 0}
+header p{color:#aebed5;line-height:1.8}
+.container{max-width:900px;margin:auto}
+.section-title{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.section-title span{color:#43e6ff}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.card{
+ background:linear-gradient(145deg,#172944cc,#10182acc);
+ border:1px solid #284568;border-radius:20px;padding:22px;
+ box-shadow:0 12px 35px #0005;transition:.25s
+}
+.card:hover{transform:translateY(-5px);border-color:#42dfff}
+.icon{font-size:38px}
+.card h3{margin:15px 0 8px}
+.card p{color:#aebed5;line-height:1.7;font-size:14px}
+.open{
+ display:inline-block;margin-top:12px;padding:11px 18px;
+ background:#087eaa;color:white;text-decoration:none;
+ border-radius:10px;font-weight:bold
+}
+.status{font-size:11px;color:#61edbd}
+footer{text-align:center;color:#7186a5;margin:50px 0 15px;font-size:12px}
+.back{color:#47dfff;text-decoration:none;display:inline-block;margin-bottom:20px}
+</style>
+</head>
+<body>
+<header>
+ <div class="tag">ABDO DIGITAL LAB · SECTION 03</div>
+ <h1>🧊 الواجهة التجريبية</h1>
+ <p>مساحة لعرض التطبيقات والتجارب البرمجية التي يتم تطويرها باستخدام Termux وPython وتقنيات الويب.</p>
+</header>
+
+<main class="container">
+ <a class="back" href="../projects.html">← العودة للأقسام</a>
+ <div class="section-title">
+  <h2>تطبيقاتي وتجربتي</h2><span>✦</span>
+ </div>
+
+ <div class="grid">
+  <article class="card">
+   <div class="icon">🧊</div>
+   <div class="status">جاهز للتجربة</div>
+   <h3>ABDO 3D LAB</h3>
+   <p>استكشف المجسمات ثلاثية الأبعاد وغيّر ألوانها وأحجامها وحركتها.</p>
+   <a class="back" href="apps/abdo-3d-lab/index.html">افتح التجربة ←</a>
+  </article>
+  <article class="card">
+   <div class="icon">🧮</div>
+   <div class="status">قريبًا · قيد التطوير</div>
+   <h3>تطبيقاتي القادمة</h3>
+   <p>هنا هنعرض التطبيقات الجديدة بعد برمجتها وتجهيزها للنشر.</p>
+  </article>
+ </div>
+</main>
+
+<footer>ABDO © 2026 — Built with creativity & code</footer>
+</body>
+</html>
