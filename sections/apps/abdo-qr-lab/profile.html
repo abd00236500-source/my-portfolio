@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بطاقتي الشخصية | ABDO QR LAB</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;padding:25px 15px;min-height:100vh;
+ font-family:Arial,sans-serif;color:white;
+ background:linear-gradient(145deg,#080d1a,#10243c);
+}
+.card{
+ max-width:450px;margin:35px auto;padding:28px;
+ text-align:center;background:rgba(8,13,26,.88);
+ border:1px solid #55c7ff66;border-radius:25px;
+ box-shadow:0 15px 45px #0008;
+}
+.avatar{
+ width:85px;height:85px;border-radius:50%;
+ margin:auto;background:#132c42;color:#55c7ff;
+ display:grid;place-items:center;font-size:35px;
+ border:2px solid #55c7ff;
+}
+h1{color:#55c7ff;margin-bottom:8px}
+#links{display:grid;gap:12px;margin-top:25px}
+a{
+ display:block;padding:14px;border-radius:12px;
+ background:#142b40;color:white;text-decoration:none;
+ border:1px solid #55c7ff55;font-weight:bold;
+}
+a:hover{background:#55c7ff;color:#06111e}
+.phone{color:#c5d5e2;margin:15px 0}
+.small{color:#8299ad;font-size:12px;margin-top:25px}
+</style>
+</head>
+<body>
+<div class="card">
+ <div class="avatar">A</div>
+ <h1 id="name">البطاقة الشخصية</h1>
+ <div class="phone" id="phone"></div>
+ <div id="links"></div>
+ <p class="small">تم إنشاء البطاقة بواسطة ABDO QR LAB</p>
+</div>
+
+<script>
+function decodeData(){
+ try{
+  const encoded=location.hash.slice(1)
+   .replace(/-/g,"+").replace(/_/g,"/");
+  if(!encoded)throw Error();
+  const json=decodeURIComponent(escape(atob(encoded)));
+  return JSON.parse(json);
+ }catch(e){return null;}
+}
+
+const data=decodeData();
+
+if(!data || !data.n){
+ document.querySelector(".card").innerHTML=
+  "<h1>الرابط غير صالح</h1><p>ارجع إلى ABDO QR LAB وأنشئ كود جديد.</p>";
+}else{
+ document.getElementById("name").textContent=data.n;
+ document.getElementById("phone").textContent=data.p||"";
+
+ const links=document.getElementById("links");
+
+ function addLink(label,url){
+  if(!url)return;
+  const a=document.createElement("a");
+  a.textContent=label;
+  a.href=url;
+  a.target="_blank";
+  a.rel="noopener noreferrer";
+  links.appendChild(a);
+ }
+
+ addLink("اتصال هاتفي","tel:"+encodeURIComponent(data.p||""));
+ addLink("WhatsApp",data.wa?
+  "https://wa.me/"+data.wa:"");
+ addLink("TikTok",data.tt);
+ addLink("Instagram",data.ig);
+ addLink("Facebook",data.fb);
+ addLink("Telegram",data.tg);
+}
+</script>
+</body>
+</html>

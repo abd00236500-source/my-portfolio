@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABDO QR LAB</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;padding:25px 15px;min-height:100vh;
+ font-family:Arial,sans-serif;color:#fff;
+ background:linear-gradient(145deg,#080d1a,#10243c);
+}
+.container{
+ max-width:520px;margin:auto;padding:25px;
+ background:rgba(8,13,26,.85);
+ border:1px solid rgba(85,199,255,.4);
+ border-radius:24px;box-shadow:0 15px 45px #0008;
+}
+h1{text-align:center;color:#55c7ff;letter-spacing:2px}
+.subtitle{text-align:center;color:#b8c9d8;margin-bottom:25px}
+label{display:block;margin:15px 0 7px;color:#55c7ff}
+input{
+ width:100%;padding:14px;border-radius:12px;
+ border:1px solid #31516b;background:#101d2e;
+ color:white;font-size:16px;outline:none;
+}
+input:focus{border-color:#55c7ff}
+button{
+ width:100%;padding:15px;margin-top:20px;
+ border:0;border-radius:12px;background:#55c7ff;
+ color:#06111e;font-weight:bold;font-size:17px;
+}
+#result{display:none;text-align:center;margin-top:25px}
+#qr{background:white;padding:12px;border-radius:15px;max-width:100%}
+.note{font-size:13px;line-height:1.8;color:#aebdca;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>ABDO QR LAB</h1>
+<p class="subtitle">اصنع بطاقة QR شخصية خاصة بك</p>
+
+<label>الاسم</label>
+<input id="name" maxlength="35" placeholder="اكتب اسمك">
+
+<label>رقم الهاتف</label>
+<input id="phone" type="tel" maxlength="20" placeholder="01xxxxxxxxx">
+
+<label>رابط TikTok (اختياري)</label>
+<input id="tiktok" placeholder="https://www.tiktok.com/@username">
+
+<label>رابط Instagram (اختياري)</label>
+<input id="instagram" placeholder="https://instagram.com/username">
+
+<label>رابط Facebook (اختياري)</label>
+<input id="facebook" placeholder="https://facebook.com/username">
+
+<label>رقم WhatsApp (اختياري)</label>
+<input id="whatsapp" type="tel" maxlength="20" placeholder="01xxxxxxxxx">
+
+<label>رابط Telegram (اختياري)</label>
+<input id="telegram" placeholder="https://t.me/username">
+
+<button onclick="generateQR()">إنشاء QR CODE</button>
+
+<div id="result">
+<h2 style="color:#55c7ff">تم إنشاء الكود بنجاح</h2>
+<div id="qr"></div>
+<button onclick="saveQR()">حفظ صورة QR</button>
+<button onclick="copyLink()" style="background:#263d55;color:white">نسخ رابط البطاقة</button>
+<p id="status" class="note"></p>
+</div>
+
+<p class="note">
+تنبيه الخصوصية: أي شخص يحصل على صورة QR أو رابط البطاقة يمكنه رؤية البيانات التي أضفتها.
+لا تضع بيانات خاصة أو حساسة.
+</p>
+</div>
+
+<script src="qrcode.min.js"></script>
+<script>
+let profileLink="";
+
+function validLink(value){
+ if(!value.trim()) return "";
+ try{
+  const u=new URL(value);
+  if(u.protocol==="https:" &&
+  ["tiktok.com","www.tiktok.com","instagram.com","www.instagram.com",
+   "facebook.com","www.facebook.com","m.facebook.com",
+   "t.me","www.t.me"].includes(u.hostname)) return u.href;
+ }catch(e){}
+ return "";
+}
+
+function generateQR(){
+ const name=document.getElementById("name").value.trim();
+ const phone=document.getElementById("phone").value.trim();
+ if(!name){alert("اكتب الاسم الأول");return;}
+ if(!phone){alert("اكتب رقم الهاتف");return;}
+
+ const data={
+  n:name,p:phone,
+  tt:validLink(document.getElementById("tiktok").value),
+  ig:validLink(document.getElementById("instagram").value),
+  fb:validLink(document.getElementById("facebook").value),
+  wa:document.getElementById("whatsapp").value.replace(/\D/g,""),
+  tg:validLink(document.getElementById("telegram").value)
+ };
+
+ const encoded=btoa(unescape(encodeURIComponent(JSON.stringify(data))))
+  .replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+
+ profileLink=new URL("profile.html",location.href).href+"#"+encoded;
+
+ const box=document.getElementById("qr");
+ box.innerHTML="";
+ document.getElementById("result").style.display="block";
+
+ new QRCode(box,{
+  text:profileLink,
+  width:260,
+  height:260,
+  colorDark:"#000000",
+  colorLight:"#ffffff",
+  correctLevel:QRCode.CorrectLevel.M
+ });
+
+ document.getElementById("status").textContent=
+  "امسح الكود بكاميرا هاتف لفتح البطاقة الشخصية.";
+}
+
+function saveQR(){
+ const img=document.querySelector("#qr img");
+ if(!img){alert("أنشئ QR الأول");return;}
+ const a=document.createElement("a");
+ a.download="ABDO-QR.png";
+ a.href=img.src;
+ a.click();
+}
+
+function copyLink(){
+ if(!profileLink)return;
+ navigator.clipboard.writeText(profileLink)
+ .then(()=>alert("تم نسخ الرابط"))
+ .catch(()=>alert("المتصفح لم يسمح بالنسخ. استخدم رابط البطاقة من شريط العنوان بعد إنشائها."));
+}
+</script>
+</body>
+</html>
