@@ -72,6 +72,24 @@ button{
 <p id="status" class="note"></p>
 </div>
 
+
+<div id="reader" style="margin-top:30px;padding-top:20px;border-top:1px solid #31516b">
+<h2 style="text-align:center;color:#55c7ff">قارئ QR CODE</h2>
+<p class="note">اقرأ أي QR من الكاميرا أو من صورة محفوظة على هاتفك.</p>
+<button onclick="startScanner()">تشغيل الكاميرا</button>
+<label for="qrFile">أو اختر صورة QR من المعرض</label>
+<input id="qrFile" type="file" accept="image/*" onchange="readQRImage(event)">
+<video id="qrVideo" playsinline style="display:none;width:100%;margin-top:15px;border-radius:12px"></video>
+<button id="stopScanner" onclick="stopScanner()" style="display:none;background:#263d55;color:white">إيقاف الكاميرا</button>
+<p id="readerStatus" class="note"></p>
+<div id="readResult" style="display:none;margin-top:15px">
+<label>محتويات QR:</label>
+<div id="qrPretty" style="text-align:right;background:#142b40;padding:15px;border-radius:12px;margin-bottom:12px;line-height:2;overflow-wrap:anywhere"></div>
+<textarea id="qrContent" readonly style="width:100%;min-height:110px;padding:12px;border-radius:12px;background:#101d2e;color:white;border:1px solid #55c7ff;direction:auto"></textarea>
+<button onclick="copyQRContent()">نسخ المحتوى</button>
+</div>
+</div>
+
 <p class="note">
 تنبيه الخصوصية: أي شخص يحصل على صورة QR أو رابط البطاقة يمكنه رؤية البيانات التي أضفتها.
 لا تضع بيانات خاصة أو حساسة.
@@ -79,6 +97,191 @@ button{
 </div>
 
 <script src="qrcode.min.js"></script>
+<script>
+let qrDetector=null, qrStream=null, scanFrame=null;
+
+async function getQRDetector(){
+ if(!("BarcodeDetector" in window)) throw Error("المتصفح لا يدعم قراءة QR المدمجة. جرّب Chrome محدثًا.");
+ const formats=await BarcodeDetector.getSupportedFormats();
+ if(!formats.includes("qr_code")) throw Error("قارئ QR غير مدعوم في هذا المتصفح.");
+ return new BarcodeDetector({formats:["qr_code"]});
+}
+
+function addQRLine(label,value){
+ if(!value)return;
+ const box=document.getElementById("qrPretty");
+ const row=document.createElement("p");
+ const title=document.createElement("strong");
+ const content=document.createElement("span");
+ title.textContent=label+": ";
+ content.textContent=value;
+ row.append(title,content);
+ box.appendChild(row);
+}
+
+function renderQRDetails(value){
+ const box=document.getElementById("qrPretty");
+ box.replaceChildren();
+
+ const showRaw=()=>addQRLine("النص الموجود داخل الرمز",value);
+
+ try{
+  if(value.startsWith("WIFI:")){
+   const part=value.slice(5);
+   const get=k=>{
+    const m=part.match(new RegExp("(?:^|;)"+k+":((?:\\\\\\\\.|[^;])*)"));
+    return m?m[1].replace(/\\\\([;,:\\\\])/g,"$1"):"";
+   };
+   addQRLine("نوع الشبكة",get("T")||"غير محدد");
+   addQRLine("اسم شبكة Wi-Fi",get("S"));
+   addQRLine("كلمة المرور",get("P")||"لا توجد");
+   addQRLine("إخفاء الشبكة",get("H"));
+   return;
+  }
+
+  if(/^BEGIN:VCARD/i.test(value)){
+   const lines=value.replace(/\r/g,"").split("\n");
+   for(const [key,label] of [["FN","الاسم"],["N","الاسم الكامل"],["ORG","الشركة"],["TITLE","الوظيفة"],["TEL","الهاتف"],["EMAIL","البريد الإلكتروني"],["URL","الموقع"],["ADR","العنوان"]]){
+    const found=lines.filter(x=>x.toUpperCase().startsWith(key+";")||x.toUpperCase().startsWith(key+":"));
+    found.forEach(x=>addQRLine(label,x.slice(x.indexOf(":")+1)));
+   }
+   return;
+  }
+
+  if(value.startsWith("MECARD:")){
+   const data=value.slice(7);
+   for(const [key,label] of [["N","الاسم"],["TEL","الهاتف"],["EMAIL","البريد الإلكتروني"],["URL","الموقع"],["ADR","العنوان"]]){
+    const m=data.match(new RegExp("(?:^|;)"+key+":([^;]*)"));
+    if(m)addQRLine(label,m[1]);
+   }
+   return;
+  }
+
+  if(/^https?:\/\//i.test(value)){
+   const url=new URL(value);
+   addQRLine("نوع البيانات","رابط موقع إلكتروني");
+   addQRLine("الموقع",url.hostname);
+   addQRLine("الرابط",value);
+
+   if(url.pathname.endsWith("/profile.html")&&url.hash.length>1){
+    try{
+     let b64=url.hash.slice(1).replace(/-/g,"+").replace(/_/g,"/");
+     b64+="=".repeat((4-b64.length%4)%4);
+     const decoded=decodeURIComponent(Array.from(atob(b64),c=>"%"+c.charCodeAt(0).toString(16).padStart(2,"0")).join(""));
+     const data=JSON.parse(decoded);
+     if(data&&data.n){
+      box.replaceChildren();
+      addQRLine("نوع البيانات","بطاقة تعريف ABDO");
+      addQRLine("الاسم",data.n);
+      addQRLine("رقم الهاتف",data.p);
+      addQRLine("TikTok",data.tt);
+      addQRLine("Instagram",data.ig);
+      addQRLine("Facebook",data.fb);
+      addQRLine("WhatsApp",data.wa);
+      addQRLine("Telegram",data.tg);
+      return;
+     }
+    }catch(e){}
+   }
+   return;
+  }
+
+  if(/^mailto:/i.test(value)){
+   addQRLine("نوع البيانات","بريد إلكتروني");
+   addQRLine("العنوان",value.slice(7).split("?")[0]);
+   return;
+  }
+
+  if(/^tel:/i.test(value)){
+   addQRLine("نوع البيانات","رقم هاتف");
+   addQRLine("رقم الهاتف",value.slice(4));
+   return;
+  }
+
+  if(/^(sms|smsto):/i.test(value)){
+   addQRLine("نوع البيانات","رسالة SMS");
+   addQRLine("البيانات",value);
+   return;
+  }
+
+  if(/^geo:/i.test(value)){
+   addQRLine("نوع البيانات","موقع جغرافي");
+   addQRLine("الإحداثيات",value.slice(4));
+   return;
+  }
+
+  addQRLine("نوع البيانات","نص أو بيانات عامة");
+  showRaw();
+ }catch(e){
+  showRaw();
+ }
+}
+
+function showQRResult(value){
+ document.getElementById("qrContent").value=value;
+ renderQRDetails(value);
+ document.getElementById("readResult").style.display="block";
+ document.getElementById("readerStatus").textContent="تمت قراءة QR بنجاح.";
+ stopScanner();
+}
+
+async function startScanner(){
+ try{
+  qrDetector=await getQRDetector();
+  qrStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}},audio:false});
+  const video=document.getElementById("qrVideo");
+  video.srcObject=qrStream;
+  video.style.display="block";
+  document.getElementById("stopScanner").style.display="block";
+  await video.play();
+  document.getElementById("readerStatus").textContent="وجّه الكاميرا نحو رمز QR.";
+  const scan=async()=>{
+   if(!qrStream)return;
+   try{
+    const codes=await qrDetector.detect(video);
+    if(codes.length){showQRResult(codes[0].rawValue);return;}
+   }catch(e){}
+   scanFrame=requestAnimationFrame(scan);
+  };
+  scan();
+ }catch(e){
+  document.getElementById("readerStatus").textContent="تعذر تشغيل القارئ: "+e.message;
+  stopScanner();
+ }
+}
+
+function stopScanner(){
+ if(scanFrame)cancelAnimationFrame(scanFrame);
+ scanFrame=null;
+ if(qrStream){qrStream.getTracks().forEach(t=>t.stop());qrStream=null;}
+ const video=document.getElementById("qrVideo");
+ video.pause();video.srcObject=null;video.style.display="none";
+ document.getElementById("stopScanner").style.display="none";
+}
+
+async function readQRImage(event){
+ const file=event.target.files[0];
+ if(!file)return;
+ try{
+  qrDetector=await getQRDetector();
+  const bitmap=await createImageBitmap(file);
+  const codes=await qrDetector.detect(bitmap);
+  bitmap.close();
+  if(codes.length)showQRResult(codes[0].rawValue);
+  else document.getElementById("readerStatus").textContent="لم يتم العثور على QR في الصورة.";
+ }catch(e){
+  document.getElementById("readerStatus").textContent="تعذر قراءة الصورة: "+e.message;
+ }
+ event.target.value="";
+}
+
+async function copyQRContent(){
+ const value=document.getElementById("qrContent").value;
+ try{await navigator.clipboard.writeText(value);alert("تم نسخ المحتوى.");}
+ catch(e){alert("تعذر النسخ من المتصفح.");}
+}
+
+</script>
 <script>
 let profileLink="";
 
